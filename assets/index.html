@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Map</title>
+        
+        <style>
+			html, body, #container {
+				margin: 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			#tooltip {
+				padding: 15px 15px;
+				background: #fff;
+				box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+				border-radius: 4px;
+				display: none;
+				position: fixed;
+				pointer-events: none;
+			}
+			select {
+				border: 0;
+				padding: 4px 10px;
+				font-size: 13px;
+				box-shadow: 0 1px 3px 0 rgba(38, 38, 38, 0.5);
+				border-radius: 4px;
+			}
+			.input-container {
+				position: absolute;  /* Absolute positioning */
+				top: 20px;           /* From the top edge of the page */
+				left: 20px;          /* From the left edge of the page */
+				background-color: transparent;
+				padding: 10px;
+				z-index: 1000;       /* Ensure it's above other items */
+			}
+			input[type="text"] {
+				padding: 8px;
+				border: none;
+				border-radius: 4px;
+				margin-right: 10px; /* Add some space between the input and button */
+			}
+			button {
+				padding: 10px 20px;
+				border: none;
+				background-color: #4CAF50; /* Green color */
+				color: white;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 16px;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+            .popup {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+        }
+        .popup-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888888;
+            width: 30%;
+            font-weight: bolder;
+        }
+        .popup-content button {
+            display: block;
+            margin: 0 auto;
+        }
+        .show {
+            display: block;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="myPopup" class="popup">
+            <div class="popup-content">
+                <h1 id="text_price"style="color:green;">
+                      GeekforGeeks !
+                  </h1>
+                <button id="closePopup">
+                      Close
+                  </button>
+            </div>
+        </div>
+        <div id="container">	
+			<div class="input-container">
+				<select id="productNameSelect" multiple size="5">
+					<!-- Product options will be dynamically added here -->
+				</select>
+				<button onclick="searchProduct()" id="button">Найти</button>
+				<p id="result"></p>
+			</div>	
+		</div>
+		<div id="tooltip"></div>
+        <script src="https://mapgl.2gis.com/api/js/v1"></script>
+        <script>
+            button.addEventListener("click", function () {
+                myPopup.classList.add("show");
+            });
+            closePopup.addEventListener("click", function () {
+                myPopup.classList.remove("show");
+            });
+            window.addEventListener("click", function (event) {
+                if (event.target == myPopup) {
+                    myPopup.classList.remove("show");
+                }
+            });
+        </script>
+        <script>
+            const map = new mapgl.Map('container', {
+                center: [71.399171, 51.089744],
+                zoom: 13,
+                key: '2ec92127-2e32-4692-90f2-f0cb8125a3ce',
+            });
+			const marker1 = new mapgl.Marker(map, {
+				coordinates: [71.3967, 51.088416],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker1, '<b>Magnum Daily</b><br/>Адрес: Астана, Проспект Кабанбай батыра 53, блок D6<br/>График работы: с 08:00 до 23:00<br/>');
+			const marker2 = new mapgl.Marker(map, {
+				coordinates: [71.397998, 51.088843],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker2, '<b>Атамекен</b><br/>Адрес: Астана, Проспект Кабанбай батыра 53, блок D3<br/>График работы: с 08:00 до 23:00<br/>');
+			const marker3 = new mapgl.Marker(map, {
+				coordinates: [71.394143, 51.089823],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker3, '<b>Весна</b><br/>Адрес: Астана, Проспект Кабанбай батыра 53, блок A1<br/>График работы: с 09:00 по 22:00<br/>');
+			const marker4 = new mapgl.Marker(map, {
+				coordinates: [71.397594, 51.087216],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker4, '<b>Айлин</b><br/>Адрес: Астана, Проспект Кабанбай батыра 53, блок D10<br/>График работы: с 08:00 по 05:00<br/>');
+			const marker5 = new mapgl.Marker(map, {
+				coordinates: [71.406737, 51.089649],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker5, '<b>Galmart</b><br/>Адрес: Астана, ТРЦ MEGA Silk Way, Проспект Кабанбай батыра 62, 1 этаж<br/>График работы: с 09:00 по 23:45<br/>');
+			const marker6 = new mapgl.Marker(map, {
+				coordinates: [71.403353, 51.085849],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker6, '<b>Astor</b><br/>Адрес: Астана, Проспект Кабанбай батыра 64<br/>График работы: с 9:00 по 23:00<br/>');
+			const marker7 = new mapgl.Marker(map, {
+				coordinates: [71.392648, 51.096704],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker7, '<b>Small</b><br/>Адрес: Астана, Проспект Туран 65<br/>График работы: с 09:00 по 24:00<br/>');
+			const marker8 = new mapgl.Marker(map, {
+				coordinates: [71.408578, 51.091603],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker8, '<b>Aimart</b><br/>Адрес: Астана, Проспект Кабанбай батыра 60/15, 1 этаж<br/>График работы: с 08:00 по 23:00<br/>');
+			const marker9 = new mapgl.Marker(map, {
+				coordinates: [71.408227, 51.095175],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker9, '<b>Инабат</b><br/>Адрес: Астана, Проспект Кабанбай батыра 58Б, корпус 4<br/>График работы: с 08:30 по 23:00<br/>');
+			const marker10 = new mapgl.Marker(map, {
+				coordinates: [71.407716, 51.095812],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker10, '<b>DN</b><br/>Адрес: Астана, Проспект Кабанбай батыра 58Б к1<br/>График работы: 24/7<br/>');
+			const marker11 = new mapgl.Marker(map, {
+				coordinates: [71.407822, 51.096073],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker11, '<b>Garden</b><br/>Адрес: Астана, Проспект Кабанбай батыра 58а, корпус 1<br/>График работы: с 10:00 по 22:00<br/>');
+			const marker12 = new mapgl.Marker(map, {
+				coordinates: [71.407959, 51.09644],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker12, '<b>На Бульваре</b><br/>Адрес: Астана, Проспект Кабанбай батыра 58а, корпус 1<br/>График работы: с 08:30 по 23:30<br/>');
+			const marker13 = new mapgl.Marker(map, {
+				coordinates: [71.41137, 51.094374],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker13, '<b>Aiaru</b><br/>Адрес: Астана, Гейдара Алиева улица 10<br/>График работы: с 08:00 по 23:45<br/>');
+			const marker14 = new mapgl.Marker(map, {
+				coordinates: [71.397194, 51.078128],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker14, '<b>Ай</b><br/>Адрес: Астана, ​Проспект Кабанбай батыра 59/2, 1 этаж<br/>График работы: с 09:00 по 24:00<br/>');
+			const marker15 = new mapgl.Marker(map, {
+				coordinates: [71.410032, 51.095913],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker15, '<b>Сəтті</b><br/>Адрес: Астана, ​Проспект Улы Дала 56/2<br/>График работы: с 08:00 по 24:00<br/>');
+			const marker16 = new mapgl.Marker(map, {
+				coordinates: [71.403328, 51.099274],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker16, '<b>Галамат</b><br/>Адрес: Астана, Проспект Улы Дала 35<br/>График работы: с 09:00 по 01:00<br/>');
+			const marker17 = new mapgl.Marker(map, {
+				coordinates: [71.399473, 51.100016],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker17, '<b>Darmart</b><br/>Адрес: Астана, Проспект Улы Дала 31<br/>График работы: с 09:00 по 24:00<br/>');
+			const marker18 = new mapgl.Marker(map, {
+				coordinates: [71.397046, 51.077715],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker18, '<b>Orange Fresh</b><br/>Адрес: Астана, ​Проспект Кабанбай батыра 59/2, 1 этаж<br/>График работы: с 10:00 по 22:00<br/>');
+			const marker19 = new mapgl.Marker(map, {
+				coordinates: [71.396986, 51.077549],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker19, '<b>Sati</b><br/>Адрес: Астана, ​Проспект Кабанбай батыра 59/2<br/>График работы: с 08:00 по 24:00<br/>');
+			const marker20 = new mapgl.Marker(map, {
+				coordinates: [71.402453, 51.100094],
+				icon: 'https://docs.2gis.com/img/mapgl/marker.svg',
+			});
+			MapInfo(marker20, '<b>Алпамыс</b><br/>Адрес: Астана, Проспект Улы Дала 35<br/>График работы: с 08:00 по 23:30<br/>');
+			
+			const groceries = [
+    {
+        name: "Magnum Daily",
+        products: [
+            {type: "Говядина", name: "Говядина 500г", price: 1000},
+            {type: "Говядина", name: "Говядина 1кг", price: 2000},
+            {type: "Говядина", name: "Говядина 2кг", price: 4000},
+            {type: "Лук", name: "Лук репчатый 250г", price: 80},
+            {type: "Лук", name: "Лук репчатый 500г", price: 109},
+            {type: "Лук", name: "Лук репчатый 1кг", price: 160},
+            {type: "Масло", name: "Масло подсолнечное 0.5 л", price: 345},
+            {type: "Масло", name: "Масло подсолнечное 0.7 л", price: 505},
+            {type: "Масло", name: "Масло подсолнечное 1 л", price: 739},
+            {type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1060},
+            {type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1200},
+            {type: "Шампунь", name: "Шампунь head&shoulders 200мл", price: 1140},
+            {type: "Яйца", name: "Яйца перепелиные 10 шт", price: 535},
+            {type: "Яйца", name: "Яйца перепелиные 15 шт", price: 685},
+            {type: "Яйца", name: "Яйца перепелиные 20 шт", price: 735},
+            {type: "Картофель", name: "Картофель молодой", price: 135},
+            {type: "Картофель", name: "Картофель белый", price: 140},
+            {type: "Картофель", name: "Картофель розовый", price: 155},
+            {type: "Картофель", name: "Картофель обычный", price: 125},
+            {type: "Картофель", name: "Картофель ", price: 120},
+            {type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 155},
+            {type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 152},
+            {type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 145},
+            {type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 125},
+            {type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 107},
+            {type: "Соль", name: "Соль поваренная ", price: 60},
+            {type: "Соль", name: "Соль пищевая ", price: 65},
+            {type: "Соль", name: "Соль самосадочная ", price: 55},
+            {type: "Соль", name: "Соль йодированная", price: 82},
+            {type: "Соль", name: "Соль ТУЗ", price: 57},
+            {type: "Сыр", name: "Сыр твердый Пармезан   ", price: 1896},
+            {type: "Сыр", name: "Сыр твердый Сливочный   ", price: 1875},
+            {type: "Сыр", name: "Сыр твердый Бурненский   ", price: 1750},
+            {type: "Сыр", name: "Сыр твердый Российский   ", price: 1957},
+            {type: "Сыр", name: "Сыр твердый Пошехонский   ", price: 1854},
+            {type: "Сметана", name: "Сметана Фудмастер", price: 609},
+            {type: "Сметана", name: "Сметана Деп", price: 506},
+            {type: "Сметана", name: "Сметана Брест-Листовск", price: 704},
+            {type: "Сметана", name: "Сметана Петмол ", price: 594},
+            {type: "Сметана", name: "Сметана Простоквашино ", price: 688},
+            {type: "Помидоры", name: "Помидоры черри 200г", price: 161},
+            {type: "Помидоры", name: "Помидоры черри 400г", price: 350},
+            {type: "Помидоры", name: "Помидоры черри 600г", price: 421},
+            {type: "Помидоры", name: "Помидоры черри 800г", price: 659},
+            {type: "Помидоры", name: "Помидоры черри 1кг", price: 805},
+            {type: "Кефир", name: "Кефир 2.5% 200г", price: 542},
+            {type: "Кефир", name: "Кефир 2.5% 400г", price: 562},
+            {type: "Кефир", name: "Кефир 2.5% 600г", price: 458},
+            {type: "Кефир", name: "Кефир 2.5% 800г", price: 574},
+            {type: "Кефир", name: "Кефир 2.5% 1кг", price: 497},
+            {type: "Лапша", name: "Лапша bigbon 200г", price: 235},
+            {type: "Лапша", name: "Лапша bigbon 400г", price: 507},
+            {type: "Лапша", name: "Лапша bigbon 600г", price: 875},
+            {type: "Лапша", name: "Лапша bigbon 800г", price: 1502},
+            {type: "Лапша", name: "Лапша bigbon 1кг", price: 1735},
+            {type: "Макароны", name: "Макароны Султан рожки 200г", price: 359},
+            {type: "Макароны", name: "Макароны Султан рожки 400г", price: 578},
+            {type: "Макароны", name: "Макароны Султан рожки 600г", price: 754},
+            {type: "Макароны", name: "Макароны Султан рожки 800г", price: 956},
+            {type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1045},
+            {type: "Колбаса", name: "Колбаса полукопченая 200г", price: 596},
+            {type: "Колбаса", name: "Колбаса полукопченая 400г", price: 758},
+            {type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1200},
+            {type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1450},
+            {type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1896},
+            {type: "Вода", name: "Вода Tassay 0.25л", price: 154},
+            {type: "Вода", name: "Вода Tassay 0.5л", price: 202},
+            {type: "Вода", name: "Вода Tassay 1л", price: 284},
+            {type: "Вода", name: "Вода Tassay 2л", price: 356},
+            {type: "Вода", name: "Вода Tassay 5л", price: 439},
+            // ... other products
+        ]
+    },
+    {
+        name: "Атамекен",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1100 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2020 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4120 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 85 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 105 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 112 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 355 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 500 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 745 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1085 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1212 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1112 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 536 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 658 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 789 },
+          { type: "Картофель", name: "Картофель молодой", price: 136 },
+          { type: "Картофель", name: "Картофель белый", price: 145 },
+          { type: "Картофель", name: "Картофель розовый", price: 166 },
+          { type: "Картофель", name: "Картофель обычный", price: 105 },
+          { type: "Картофель", name: "Картофель ", price: 120 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 175 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 145 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 178 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 121 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 201 },
+          { type: "Соль", name: "Соль поваренная", price: 55 },
+          { type: "Соль", name: "Соль пищевая", price: 58 },
+          { type: "Соль", name: "Соль самосадочная", price: 57 },
+          { type: "Соль", name: "Соль йодированная", price: 56 },
+          { type: "Соль", name: "Соль ТУЗ", price: 67 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1757 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1558 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1658 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1457 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1759 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 619 },
+          { type: "Сметана", name: "Сметана Деп", price: 516 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 714 },
+          { type: "Сметана", name: "Сметана Петмол", price: 554 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 655 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 156 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 357 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 445 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 685 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 847 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 254 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 278 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 356 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 458 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 574 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 248 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 358 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 452 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 635 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 789 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 112 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 225 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 338 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 451 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 563 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 389 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 568 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 721 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 856 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 977 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 49 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 68 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 126 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 226 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 526 },
+          // ... other products
+        ]
+    },
+    {
+        name: "Весна",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1050 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2560 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4450 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 96 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 115 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 125 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 375 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 550 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 735 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1045 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1252 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1162 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 576 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 658 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 787 },
+          { type: "Картофель", name: "Картофель молодой", price: 135 },
+          { type: "Картофель", name: "Картофель белый", price: 136 },
+          { type: "Картофель", name: "Картофель розовый", price: 145 },
+          { type: "Картофель", name: "Картофель обычный", price: 114 },
+          { type: "Картофель", name: "Картофель ", price: 126 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 185 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 136 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 187 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 148 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 198 },
+          { type: "Соль", name: "Соль поваренная", price: 58 },
+          { type: "Соль", name: "Соль пищевая", price: 62 },
+          { type: "Соль", name: "Соль самосадочная", price: 54 },
+          { type: "Соль", name: "Соль йодированная", price: 76 },
+          { type: "Соль", name: "Соль ТУЗ", price: 63 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1787 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1568 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1647 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1475 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1792 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 625 },
+          { type: "Сметана", name: "Сметана Деп", price: 621 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 506 },
+          { type: "Сметана", name: "Сметана Петмол", price: 585 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 677 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 156 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 378 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 485 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 665 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 846 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 257 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 205 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 308 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 498 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 524 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 237 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 547 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 868 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1648 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1254 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 365 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 545 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 735 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 975 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1687 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 565 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 775 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1298 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1235 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1754 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 115 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 221 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 235 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 395 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 437 },
+          // ... other products
+        ]
+    },
+    {
+        name: "Айлин",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1450 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2565 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4850 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 94 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 114 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 122 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 374 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 556 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 737 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1085 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1257 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1142 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 576 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 648 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 727 },
+          { type: "Картофель", name: "Картофель молодой", price: 145 },
+          { type: "Картофель", name: "Картофель белый", price: 138 },
+          { type: "Картофель", name: "Картофель розовый", price: 149 },
+          { type: "Картофель", name: "Картофель обычный", price: 117 },
+          { type: "Картофель", name: "Картофель ", price: 127 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 145 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 126 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 177 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 158 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 148 },
+          { type: "Соль", name: "Соль поваренная", price: 57 },
+          { type: "Соль", name: "Соль пищевая", price: 64 },
+          { type: "Соль", name: "Соль самосадочная", price: 57 },
+          { type: "Соль", name: "Соль йодированная", price: 78 },
+          { type: "Соль", name: "Соль ТУЗ", price: 61 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1785 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1564 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1637 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1475 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1798 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 615 },
+          { type: "Сметана", name: "Сметана Деп", price: 629 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 541 },
+          { type: "Сметана", name: "Сметана Петмол", price: 583 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 671 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 126 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 375 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 482 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 664 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 843 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 252 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 207 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 306 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 428 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 574 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 227 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 537 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 884 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1658 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1954 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 355 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 565 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 739 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 977 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1682 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 566 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 754 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1358 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1455 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1784 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 135 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 231 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 215 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 405 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 417 },
+          // ... other products
+        ]
+    },
+    {
+        name: "Galmart",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1440 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2535 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4884 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 99 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 86 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 132 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 374 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 515 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 745 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1045 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1286 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1154 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 564 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 645 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 735 },
+          { type: "Картофель", name: "Картофель молодой", price: 126 },
+          { type: "Картофель", name: "Картофель белый", price: 188 },
+          { type: "Картофель", name: "Картофель розовый", price: 169 },
+          { type: "Картофель", name: "Картофель обычный", price: 147 },
+          { type: "Картофель", name: "Картофель ", price: 137 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 195 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 146 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 167 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 178 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 138 },
+          { type: "Соль", name: "Соль поваренная", price: 47 },
+          { type: "Соль", name: "Соль пищевая", price: 54 },
+          { type: "Соль", name: "Соль самосадочная", price: 87 },
+          { type: "Соль", name: "Соль йодированная", price: 68 },
+          { type: "Соль", name: "Соль ТУЗ", price: 51 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1685 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1464 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1537 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1775 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1898 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 655 },
+          { type: "Сметана", name: "Сметана Деп", price: 689 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 511 },
+          { type: "Сметана", name: "Сметана Петмол", price: 513 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 641 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 116 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 315 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 452 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 624 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 823 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 227 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 237 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 316 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 438 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 564 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 217 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 527 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 874 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1638 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1854 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 325 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 545 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 719 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 927 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1652 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 546 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 734 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1338 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1465 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1774 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 155 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 238 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 321 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 415 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 517 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Astor",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1140 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2235 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4584 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 79 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 116 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 201 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 378 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 516 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 747 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1048 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1284 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1158 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 566 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 647 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 734 },
+          { type: "Картофель", name: "Картофель молодой", price: 124 },
+          { type: "Картофель", name: "Картофель белый", price: 184 },
+          { type: "Картофель", name: "Картофель розовый", price: 129 },
+          { type: "Картофель", name: "Картофель обычный", price: 167 },
+          { type: "Картофель", name: "Картофель ", price: 147 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 185 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 166 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 137 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 179 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 145 },
+          { type: "Соль", name: "Соль поваренная", price: 52 },
+          { type: "Соль", name: "Соль пищевая", price: 48 },
+          { type: "Соль", name: "Соль самосадочная", price: 86 },
+          { type: "Соль", name: "Соль йодированная", price: 64 },
+          { type: "Соль", name: "Соль ТУЗ", price: 53 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1687 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1462 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1537 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1776 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1894 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 654 },
+          { type: "Сметана", name: "Сметана Деп", price: 686 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 515 },
+          { type: "Сметана", name: "Сметана Петмол", price: 512 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 611 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 165 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 355 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 458 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 627 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 829 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 226 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 234 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 317 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 468 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 563 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 218 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 527 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 876 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1637 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1852 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 327 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 544 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 759 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 929 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1656 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 547 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 735 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1337 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1462 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1745 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 104 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 135 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 327 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 485 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 556 },
+            // ... other products
+        ]
+    },
+    {
+        name: "Small",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1144 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2232 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4583 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 89 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 126 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 211 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 371 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 506 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 767 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1047 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1224 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1138 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 560 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 640 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 730 },
+          { type: "Картофель", name: "Картофель молодой", price: 120 },
+          { type: "Картофель", name: "Картофель белый", price: 105 },
+          { type: "Картофель", name: "Картофель розовый", price: 109 },
+          { type: "Картофель", name: "Картофель обычный", price: 107 },
+          { type: "Картофель", name: "Картофель", price: 140 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 105 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 106 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 130 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 170 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 140 },
+          { type: "Соль", name: "Соль поваренная", price: 54 },
+          { type: "Соль", name: "Соль пищевая", price: 41 },
+          { type: "Соль", name: "Соль самосадочная", price: 82 },
+          { type: "Соль", name: "Соль йодированная", price: 61 },
+          { type: "Соль", name: "Соль ТУЗ", price: 55 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1607 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1062 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1037 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1770 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1804 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 604 },
+          { type: "Сметана", name: "Сметана Деп", price: 606 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 505 },
+          { type: "Сметана", name: "Сметана Петмол", price: 510 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 621 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 105 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 335 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 468 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 647 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 869 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 286 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 244 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 367 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 448 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 573 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 228 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 507 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 806 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1630 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1850 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 307 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 504 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 709 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 909 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1156 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 540 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 730 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 1007 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1062 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1045 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 109 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 130 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 307 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 480 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 506 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Aimart",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1144 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2332 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4523 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 79 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 166 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 261 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 311 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 526 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 747 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1037 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1224 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1108 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 552 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 641 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 731 },
+          { type: "Картофель", name: "Картофель молодой", price: 121 },
+          { type: "Картофель", name: "Картофель белый", price: 112 },
+          { type: "Картофель", name: "Картофель розовый", price: 119 },
+          { type: "Картофель", name: "Картофель обычный", price: 97 },
+          { type: "Картофель", name: "Картофель", price: 125 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 135 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 146 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 160 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 125 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 135 },
+          { type: "Соль", name: "Соль поваренная", price: 58 },
+          { type: "Соль", name: "Соль пищевая", price: 40 },
+          { type: "Соль", name: "Соль самосадочная", price: 80 },
+          { type: "Соль", name: "Соль йодированная", price: 64 },
+          { type: "Соль", name: "Соль ТУЗ", price: 56 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1617 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1002 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1067 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1770 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1814 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 604 },
+          { type: "Сметана", name: "Сметана Деп", price: 602 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 503 },
+          { type: "Сметана", name: "Сметана Петмол", price: 514 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 641 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 115 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 355 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 466 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 667 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 829 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 296 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 248 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 364 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 446 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 575 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 227 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 509 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 845 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1689 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1852 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 357 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 604 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 719 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 901 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1150 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 542 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 720 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 956 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1002 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1042 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 100 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 102 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 314 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 478 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 556 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Инабат",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1044 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2212 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4520 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 76 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 164 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 261 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 321 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 527 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 741 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1032 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1213 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1118 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 512 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 645 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 735 },
+          { type: "Картофель", name: "Картофель молодой", price: 112 },
+          { type: "Картофель", name: "Картофель белый", price: 157 },
+          { type: "Картофель", name: "Картофель розовый", price: 165 },
+          { type: "Картофель", name: "Картофель обычный", price: 123 },
+          { type: "Картофель", name: "Картофель", price: 142 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 153 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 186 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 142 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 127 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 155 },
+          { type: "Соль", name: "Соль поваренная", price: 53 },
+          { type: "Соль", name: "Соль пищевая", price: 44 },
+          { type: "Соль", name: "Соль самосадочная", price: 87 },
+          { type: "Соль", name: "Соль йодированная", price: 67 },
+          { type: "Соль", name: "Соль ТУЗ", price: 86 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1612 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1242 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1567 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1374 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1352 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 654 },
+          { type: "Сметана", name: "Сметана Деп", price: 635 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 553 },
+          { type: "Сметана", name: "Сметана Петмол", price: 516 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 625 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 145 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 365 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 446 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 625 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 835 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 268 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 225 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 345 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 466 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 535 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 214 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 516 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 814 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1624 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1845 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 324 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 614 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 700 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 902 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1100 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 524 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 728 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 954 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1065 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1038 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 104 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 145 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 325 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 487 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 569 }
+            // ... other products
+        ]
+    },
+    {
+        name: "DN",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1024 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2245 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4420 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 76 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 201 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 321 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 301 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 504 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 706 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1002 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1230 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1110 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 519 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 635 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 739 },
+          { type: "Картофель", name: "Картофель молодой", price: 119 },
+          { type: "Картофель", name: "Картофель белый", price: 167 },
+          { type: "Картофель", name: "Картофель розовый", price: 110 },
+          { type: "Картофель", name: "Картофель обычный", price: 122 },
+          { type: "Картофель", name: "Картофель", price: 110 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 130 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 147 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 158 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 169 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 120 },
+          { type: "Соль", name: "Соль поваренная", price: 54 },
+          { type: "Соль", name: "Соль пищевая", price: 48 },
+          { type: "Соль", name: "Соль самосадочная", price: 89 },
+          { type: "Соль", name: "Соль йодированная", price: 62 },
+          { type: "Соль", name: "Соль ТУЗ", price: 83 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1272 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1342 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1587 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1379 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1152 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 623 },
+          { type: "Сметана", name: "Сметана Деп", price: 565 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 653 },
+          { type: "Сметана", name: "Сметана Петмол", price: 616 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 525 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 245 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 353 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 526 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 695 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 855 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 267 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 235 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 365 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 476 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 538 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 219 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 516 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 817 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1634 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1861 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 357 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 626 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 750 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 924 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1160 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 524 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 721 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 953 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1069 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1241 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 121 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 146 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 318 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 495 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 545 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Garden",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1024 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2245 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4420 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 76 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 201 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 321 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 301 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 504 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 706 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1002 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1230 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1110 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 519 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 635 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 739 },
+          { type: "Картофель", name: "Картофель молодой", price: 119 },
+          { type: "Картофель", name: "Картофель белый", price: 167 },
+          { type: "Картофель", name: "Картофель розовый", price: 110 },
+          { type: "Картофель", name: "Картофель обычный", price: 122 },
+          { type: "Картофель", name: "Картофель", price: 110 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 130 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 147 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 158 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 169 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 120 },
+          { type: "Соль", name: "Соль поваренная", price: 54 },
+          { type: "Соль", name: "Соль пищевая", price: 48 },
+          { type: "Соль", name: "Соль самосадочная", price: 89 },
+          { type: "Соль", name: "Соль йодированная", price: 62 },
+          { type: "Соль", name: "Соль ТУЗ", price: 83 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1274 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1322 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1584 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1347 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1142 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 626 },
+          { type: "Сметана", name: "Сметана Деп", price: 564 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 623 },
+          { type: "Сметана", name: "Сметана Петмол", price: 611 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 521 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 241 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 350 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 506 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 690 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 805 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 260 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 205 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 362 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 406 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 508 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 210 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 512 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 807 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1632 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1761 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 327 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 622 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 752 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 924 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1164 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 520 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 724 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 943 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1060 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1225 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 135 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 142 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 310 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 405 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 540 }
+            // ... other products
+        ]
+    },
+    {
+        name: "На бульваре",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1124 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2215 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4426 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 77 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 207 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 371 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 371 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 505 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 736 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1052 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1240 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1141 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 512 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 635 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 756 },
+          { type: "Картофель", name: "Картофель молодой", price: 154 },
+          { type: "Картофель", name: "Картофель белый", price: 135 },
+          { type: "Картофель", name: "Картофель розовый", price: 141 },
+          { type: "Картофель", name: "Картофель обычный", price: 120 },
+          { type: "Картофель", name: "Картофель", price: 110 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 120 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 112 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 136 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 129 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 127 },
+          { type: "Соль", name: "Соль поваренная", price: 52 },
+          { type: "Соль", name: "Соль пищевая", price: 43 },
+          { type: "Соль", name: "Соль самосадочная", price: 79 },
+          { type: "Соль", name: "Соль йодированная", price: 66 },
+          { type: "Соль", name: "Соль ТУЗ", price: 88 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1244 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1332 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1574 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1357 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1162 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 627 },
+          { type: "Сметана", name: "Сметана Деп", price: 543 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 633 },
+          { type: "Сметана", name: "Сметана Петмол", price: 631 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 511 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 2411 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 324 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 520 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 620 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 835 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 250 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 224 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 325 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 435 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 528 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 214 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 522 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 837 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1602 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1764 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 327 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 672 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 756 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 924 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1165 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 522 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 704 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 921 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1052 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1236 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 130 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 152 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 320 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 403 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 520 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Aiaru",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1114 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2124 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4436 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 74 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 202 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 374 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 341 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 545 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 736 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1082 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1260 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1511 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 513 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 645 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 750 },
+          { type: "Картофель", name: "Картофель молодой", price: 156 },
+          { type: "Картофель", name: "Картофель белый", price: 112 },
+          { type: "Картофель", name: "Картофель розовый", price: 121 },
+          { type: "Картофель", name: "Картофель обычный", price: 130 },
+          { type: "Картофель", name: "Картофель", price: 121 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 123 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 112 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 134 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 138 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 136 },
+          { type: "Соль", name: "Соль поваренная", price: 64 },
+          { type: "Соль", name: "Соль пищевая", price: 52 },
+          { type: "Соль", name: "Соль самосадочная", price: 64 },
+          { type: "Соль", name: "Соль йодированная", price: 62 },
+          { type: "Соль", name: "Соль ТУЗ", price: 84 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1248 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1382 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1874 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1387 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1168 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 687 },
+          { type: "Сметана", name: "Сметана Деп", price: 583 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 638 },
+          { type: "Сметана", name: "Сметана Петмол", price: 638 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 513 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 243 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 334 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 523 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 623 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 895 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 252 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 214 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 323 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 425 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 522 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 212 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 512 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 832 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1622 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1762 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 347 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 673 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 746 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 964 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1115 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 526 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 744 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 941 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1042 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1234 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 134 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 154 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 323 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 453 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 526 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Ай",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1045 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2054 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4086 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 77 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 232 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 373 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 345 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 560 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 780 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1075 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1264 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1011 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 518 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 665 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 753 },
+          { type: "Картофель", name: "Картофель молодой", price: 154 },
+          { type: "Картофель", name: "Картофель белый", price: 116 },
+          { type: "Картофель", name: "Картофель розовый", price: 124 },
+          { type: "Картофель", name: "Картофель обычный", price: 150 },
+          { type: "Картофель", name: "Картофель", price: 174 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 108 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 142 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 156 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 118 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 156 },
+          { type: "Соль", name: "Соль поваренная", price: 68 },
+          { type: "Соль", name: "Соль пищевая", price: 56 },
+          { type: "Соль", name: "Соль самосадочная", price: 67 },
+          { type: "Соль", name: "Соль йодированная", price: 75 },
+          { type: "Соль", name: "Соль ТУЗ", price: 56 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1275 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1332 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1774 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1367 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1164 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 684 },
+          { type: "Сметана", name: "Сметана Деп", price: 513 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 631 },
+          { type: "Сметана", name: "Сметана Петмол", price: 618 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 563 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 233 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 336 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 526 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 663 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 899 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 232 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 216 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 378 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 456 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 554 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 200 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 552 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 860 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1630 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1786 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 387 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 674 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 736 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 966 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1196 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 524 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 745 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 965 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1096 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1236 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 137 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 104 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 356 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 435 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 526 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Сəтті",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1045 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2054 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4086 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 77 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 232 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 373 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 345 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 560 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 780 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1075 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1264 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1011 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 518 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 665 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 753 },
+          { type: "Картофель", name: "Картофель молодой", price: 154 },
+          { type: "Картофель", name: "Картофель белый", price: 116 },
+          { type: "Картофель", name: "Картофель розовый", price: 124 },
+          { type: "Картофель", name: "Картофель обычный", price: 150 },
+          { type: "Картофель", name: "Картофель", price: 174 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 108 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 142 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 156 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 118 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 156 },
+          { type: "Соль", name: "Соль поваренная", price: 68 },
+          { type: "Соль", name: "Соль пищевая", price: 56 },
+          { type: "Соль", name: "Соль самосадочная", price: 67 },
+          { type: "Соль", name: "Соль йодированная", price: 75 },
+          { type: "Соль", name: "Соль ТУЗ", price: 65 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1235 },
+          { type: "Сыр", name: "Сыр твердый Сливочный", price: 1122 },
+          { type: "Сыр", name: "Сыр твердый Бурненский", price: 1454 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1386 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1134 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 645 },
+          { type: "Сметана", name: "Сметана Деп", price: 563 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 645 },
+          { type: "Сметана", name: "Сметана Петмол", price: 628 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 535 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 265 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 353 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 542 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 686 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 853 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 275 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 286 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 353 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 496 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 575 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 224 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 535 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 868 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1112 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1566 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 335 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 645 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 768 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 975 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1152 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 535 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 747 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 935 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1596 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1756 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 108 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 123 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 347 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 428 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 504 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Галамат",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1040 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2004 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4006 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 71 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 230 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 370 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 340 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 500 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 700 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1070 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1260 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1010 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 510 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 657 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 787 },
+          { type: "Картофель", name: "Картофель молодой", price: 165 },
+          { type: "Картофель", name: "Картофель белый", price: 138 },
+          { type: "Картофель", name: "Картофель розовый", price: 153 },
+          { type: "Картофель", name: "Картофель обычный", price: 135 },
+          { type: "Картофель", name: "Картофель", price: 104 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 156 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 140 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 104 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 157 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 107 },
+          { type: "Соль", name: "Соль поваренная", price: 57 },
+          { type: "Соль", name: "Соль пищевая", price: 65 },
+          { type: "Соль", name: "Соль самосадочная", price: 75 },
+          { type: "Соль", name: "Соль йодированная", price: 74 },
+          { type: "Соль", name: "Соль ТУЗ", price: 63 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1014 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1224 },
+          { type: "Сыр", name: "Сыр твердый Bурненский", price: 1434 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1346 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1435 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 621 },
+          { type: "Сметана", name: "Сметана Деп", price: 557 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 635 },
+          { type: "Сметана", name: "Сметана Петмол", price: 624 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 508 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 265 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 305 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 552 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 604 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 852 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 201 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 224 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 383 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 486 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 568 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 224 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 545 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 886 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1175 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1586 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 304 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 675 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 735 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 924 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1157 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 547 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 768 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 968 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1535 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1707 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 175 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 120 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 340 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 457 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 547 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Darmart",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1045 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2404 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4025 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 76 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 245 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 348 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 338 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 557 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 723 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1074 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1266 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1014 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 516 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 687 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 789 },
+          { type: "Картофель", name: "Картофель молодой", price: 169 },
+          { type: "Картофель", name: "Картофель белый", price: 139 },
+          { type: "Картофель", name: "Картофель розовый", price: 159 },
+          { type: "Картофель", name: "Картофель обычный", price: 195 },
+          { type: "Картофель", name: "Картофель", price: 109 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 196 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 160 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 144 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 167 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 197 },
+          { type: "Соль", name: "Соль поваренная", price: 57 },
+          { type: "Соль", name: "Соль пищевая", price: 64 },
+          { type: "Соль", name: "Соль самосадочная", price: 95 },
+          { type: "Соль", name: "Соль йодированная", price: 54 },
+          { type: "Соль", name: "Соль ТУЗ", price: 65 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1457 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1294 },
+          { type: "Сыр", name: "Сыр твердый Bурненский", price: 1494 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1396 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1935 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 691 },
+          { type: "Сметана", name: "Сметана Деп", price: 559 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 639 },
+          { type: "Сметана", name: "Сметана Петмол", price: 629 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 598 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 269 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 309 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 559 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 609 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 859 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 291 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 229 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 393 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 489 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 569 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 229 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 595 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 896 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1179 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1589 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 309 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 679 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 739 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 929 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1457 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 549 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 798 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 969 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1599 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1709 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 179 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 129 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 349 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 459 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 549 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Orange Fresh",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1047 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2484 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4026 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 77 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 246 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 347 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 332 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 553 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 728 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1077 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1266 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1064 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 514 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 686 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 749 },
+          { type: "Картофель", name: "Картофель молодой", price: 162 },
+          { type: "Картофель", name: "Картофель белый", price: 132 },
+          { type: "Картофель", name: "Картофель розовый", price: 129 },
+          { type: "Картофель", name: "Картофель обычный", price: 125 },
+          { type: "Картофель", name: "Картофель", price: 102 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 192 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 120 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 122 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 162 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 127 },
+          { type: "Соль", name: "Соль поваренная", price: 52 },
+          { type: "Соль", name: "Соль пищевая", price: 62 },
+          { type: "Соль", name: "Соль самосадочная", price: 92 },
+          { type: "Соль", name: "Соль йодированная", price: 53 },
+          { type: "Соль", name: "Соль ТУЗ", price: 65 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1455 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1295 },
+          { type: "Сыр", name: "Сыр твердый Bурненский", price: 1454 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1395 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1955 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 652 },
+          { type: "Сметана", name: "Сметана Деп", price: 529 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 625 },
+          { type: "Сметана", name: "Сметана Петмол", price: 625 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 595 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 259 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 305 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 559 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 659 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 855 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 295 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 259 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 395 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 459 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 565 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 225 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 525 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 856 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1172 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1586 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 306 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 672 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 729 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 922 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1452 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 542 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 796 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 968 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1569 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1702 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 175 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 125 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 345 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 452 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 557 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Sati",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1054 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2467 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4022 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 74 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 248 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 475 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 372 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 563 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 729 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1079 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1296 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1069 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 542 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 682 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 744 },
+          { type: "Картофель", name: "Картофель молодой", price: 164 },
+          { type: "Картофель", name: "Картофель белый", price: 134 },
+          { type: "Картофель", name: "Картофель розовый", price: 124 },
+          { type: "Картофель", name: "Картофель обычный", price: 124 },
+          { type: "Картофель", name: "Картофель", price: 102 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 142 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 140 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 146 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 152 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 147 },
+          { type: "Соль", name: "Соль поваренная", price: 55 },
+          { type: "Соль", name: "Соль пищевая", price: 64 },
+          { type: "Соль", name: "Соль самосадочная", price: 94 },
+          { type: "Соль", name: "Соль йодированная", price: 55 },
+          { type: "Соль", name: "Соль ТУЗ", price: 67 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1458 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1296 },
+          { type: "Сыр", name: "Сыр твердый Bурненский", price: 1244 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1394 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1953 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 654 },
+          { type: "Сметана", name: "Сметана Деп", price: 525 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 628 },
+          { type: "Сметана", name: "Сметана Петмол", price: 624 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 595 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 259 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 307 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 577 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 652 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 857 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 275 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 256 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 397 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 479 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 568 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 228 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 585 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 858 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1178 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1566 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 307 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 682 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 789 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 928 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1458 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 548 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 898 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 988 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1589 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1782 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 108 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 128 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 368 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 457 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 587 }
+            // ... other products
+        ]
+    },
+    {
+        name: "Алпамыс",
+        products: [
+          { type: "Говядина", name: "Говядина 500г", price: 1154 },
+          { type: "Говядина", name: "Говядина 1кг", price: 2461 },
+          { type: "Говядина", name: "Говядина 2кг", price: 4027 },
+          { type: "Лук", name: "Лук репчатый 250г", price: 71 },
+          { type: "Лук", name: "Лук репчатый 500г", price: 218 },
+          { type: "Лук", name: "Лук репчатый 1кг", price: 471 },
+          { type: "Масло", name: "Масло подсолнечное 0.5 л", price: 372 },
+          { type: "Масло", name: "Масло подсолнечное 0.7 л", price: 513 },
+          { type: "Масло", name: "Масло подсолнечное 1 л", price: 721 },
+          { type: "Шампунь", name: "Шампунь Timotei 400мл", price: 1071 },
+          { type: "Шампунь", name: "Шампунь Gliss Kur 250мл", price: 1216 },
+          { type: "Шампунь", name: "Шампунь head & shoulders 200мл", price: 1019 },
+          { type: "Яйца", name: "Яйца перепелиные 10 шт", price: 512 },
+          { type: "Яйца", name: "Яйца перепелиные 15 шт", price: 685 },
+          { type: "Яйца", name: "Яйца перепелиные 20 шт", price: 741 },
+          { type: "Картофель", name: "Картофель молодой", price: 114 },
+          { type: "Картофель", name: "Картофель белый", price: 131 },
+          { type: "Картофель", name: "Картофель розовый", price: 144 },
+          { type: "Картофель", name: "Картофель обычный", price: 134 },
+          { type: "Картофель", name: "Картофель", price: 105 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Zeta", price: 144 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Beta", price: 148 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Jeta", price: 156 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Leta", price: 122 },
+          { type: "Туалетная бумага", name: "Туалетная бумага Feta", price: 148 },
+          { type: "Соль", name: "Соль поваренная", price: 53 },
+          { type: "Соль", name: "Соль пищевая", price: 68 },
+          { type: "Соль", name: "Соль самосадочная", price: 95 },
+          { type: "Соль", name: "Соль йодированная", price: 56 },
+          { type: "Соль", name: "Соль ТУЗ", price: 68 },
+          { type: "Сыр", name: "Сыр твердый Пармезан", price: 1475 },
+          { type: "Сыр", name: "Сыр твердый Sливочный", price: 1268 },
+          { type: "Сыр", name: "Сыр твердый Bурненский", price: 1454 },
+          { type: "Сыр", name: "Сыр твердый Российский", price: 1364 },
+          { type: "Сыр", name: "Сыр твердый Пошехонский", price: 1653 },
+          { type: "Сметана", name: "Сметана Фудмастер", price: 656 },
+          { type: "Сметана", name: "Сметана Деп", price: 528 },
+          { type: "Сметана", name: "Сметана Брест-Листовск", price: 629 },
+          { type: "Сметана", name: "Сметана Петмол", price: 627 },
+          { type: "Сметана", name: "Сметана Простоквашино", price: 567 },
+          { type: "Помидоры", name: "Помидоры черри 200г", price: 257 },
+          { type: "Помидоры", name: "Помидоры черри 400г", price: 366 },
+          { type: "Помидоры", name: "Помидоры черри 600г", price: 576 },
+          { type: "Помидоры", name: "Помидоры черри 800г", price: 682 },
+          { type: "Помидоры", name: "Помидоры черри 1кг", price: 852 },
+          { type: "Кефир", name: "Кефир 2.5% 200г", price: 200 },
+          { type: "Кефир", name: "Кефир 2.5% 400г", price: 286 },
+          { type: "Кефир", name: "Кефир 2.5% 600г", price: 317 },
+          { type: "Кефир", name: "Кефир 2.5% 800г", price: 479 },
+          { type: "Кефир", name: "Кефир 2.5% 1кг", price: 667 },
+          { type: "Лапша", name: "Лапша bigbon 200г", price: 238 },
+          { type: "Лапша", name: "Лапша bigbon 400г", price: 578 },
+          { type: "Лапша", name: "Лапша bigbon 600г", price: 858 },
+          { type: "Лапша", name: "Лапша bigbon 800г", price: 1176 },
+          { type: "Лапша", name: "Лапша bigbon 1кг", price: 1567 },
+          { type: "Макароны", name: "Макароны Султан рожки 200г", price: 317 },
+          { type: "Макароны", name: "Макароны Султан рожки 400г", price: 685 },
+          { type: "Макароны", name: "Макароны Султан рожки 600г", price: 749 },
+          { type: "Макароны", name: "Макароны Султан рожки 800г", price: 926 },
+          { type: "Макароны", name: "Макароны Султан рожки 1кг", price: 1457 },
+          { type: "Колбаса", name: "Колбаса полукопченая 200г", price: 528 },
+          { type: "Колбаса", name: "Колбаса полукопченая 400г", price: 884 },
+          { type: "Колбаса", name: "Колбаса полукопченая 600г", price: 905 },
+          { type: "Колбаса", name: "Колбаса полукопченая 800г", price: 1506 },
+          { type: "Колбаса", name: "Колбаса полукопченая 1кг", price: 1718 },
+          { type: "Вода", name: "Вода Tassay 0.25л", price: 98 },
+          { type: "Вода", name: "Вода Tassay 0.5л", price: 105 },
+          { type: "Вода", name: "Вода Tassay 1л", price: 367 },
+          { type: "Вода", name: "Вода Tassay 2л", price: 463 },
+          { type: "Вода", name: "Вода Tassay 5л", price: 598 }
+            // ... other products
+        ]
+    }
+    
+];
+			
+			const allProducts = [...new Set(groceries.flatMap(grocery => grocery.products.map(product => product.name)))];
+
+const productSelect = document.getElementById('productNameSelect');
+allProducts.forEach(product => {
+    const option = new Option(product, product);
+    productSelect.add(option);
+});
+
+function findCheapestGroceryForBasket(productNames) {
+    let cheapestTotalPrice = Infinity; // Start with a high number to ensure any price will be lower
+    let cheapestGrocery = null;
+
+    for (const grocery of groceries) {
+        let basketTotalPrice = 0;
+        let allProductsAvailable = true;
+
+        for (const productName of productNames) {
+            const product = grocery.products.find(p => p.name === productName);
+
+            if (!product) {
+                allProductsAvailable = false;
+                break;
+            }
+
+            basketTotalPrice += product.price;
+        }
+
+        if (allProductsAvailable && basketTotalPrice < cheapestTotalPrice) {
+            cheapestTotalPrice = basketTotalPrice;
+            cheapestGrocery = grocery;
+        }
+    }
+
+    return cheapestGrocery ?
+        `The best price of the basket will be the cheapest at ${cheapestGrocery.name} for ${cheapestTotalPrice.toFixed(0)} tenge` :
+        `No grocery store contains all selected products.`;
+}
+
+function searchProduct() {
+    const selectedOptions = Array.from(document.getElementById('productNameSelect').selectedOptions);
+    const selectedProducts = selectedOptions.map(option => option.value);
+    const result = findCheapestGroceryForBasket(selectedProducts);
+
+    document.getElementById("text_price").innerText = result;
+}
+
+
+
+			const controlsHtml = `<div class="controls">
+					<select name="city">
+						<option value="f1">Астана</option>
+						<option value="f2">Алматы</option>
+						<option value="f3">Актау</option>
+						<option value="f4">Шымкент</option>
+						<option value="f5">Атырау</option>
+					</select>
+				</div>`;
+
+			new mapgl.Control(map, controlsHtml, {
+				position: 'topLeft',
+			});
+
+
+			window.addEventListener('change', (evt) => {
+				if (evt.target.name == 'city') {
+					switch (evt.target.value) {
+					   case 'f1':
+							map.setCenter([71.399171, 51.089744]);
+							break;
+					   case 'f2':
+							map.setCenter([76.945298, 43.238478]);
+							break;
+					   case 'f3':
+							map.setCenter([51.168271, 43.635588]);
+							break;
+					   case 'f4':
+							map.setCenter([69.587036, 42.315446]);
+							break;
+					   case 'f5':
+							map.setCenter([51.913916, 47.128761]);
+							break;
+					}
+				}
+			});
+
+
+			function MapInfo(marker, text) {
+				const tooltipEl = document.getElementById('tooltip');
+				marker.on('mouseover', (event) => {
+					const offset = 5;
+					tooltipEl.style.top = `${event.point[1] + offset}px`;
+					tooltipEl.style.left = `${event.point[0] + offset}px`;
+					tooltipEl.style.display = 'block';
+					tooltipEl.innerHTML = text;
+				});
+
+				marker.on('mouseout', (e) => {
+					tooltipEl.style.display = 'none';
+				});
+			}
+			
+        </script>
+		<script src="script.js"></script>
+    </body>
+</html>
