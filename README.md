@@ -1,6 +1,6 @@
 # teztap4
 
-A new Flutter+JS mobile web app which finds the cheapest cart price of products in nearest groceries 
+A new Flutter+JS mobile web app for 'NeHackathon' which finds the cheapest cart price of products in nearest groceries 
 
 A feature-rich, interactive map implemented using the 2GIS MapGL JavaScript API. The map is customized to:
 Display multiple markers indicating various locations with customized icons.
