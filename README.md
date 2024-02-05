@@ -13,3 +13,7 @@ Styling has been applied to ensure the map, markers, tooltips, and controls visu
 How to run:
   1. Install flutter in your terminal by command: flutter doctor
   2. Run the app in your IDE
+
+<img width="893" alt="Screenshot 2024-02-05 at 16 22 36" src="https://github.com/Nurzhek/teztap4/assets/99636082/044e4471-7063-4ce4-a854-e38e32888cd9">
+<img width="895" alt="Screenshot 2024-02-05 at 16 22 57" src="https://github.com/Nurzhek/teztap4/assets/99636082/91579d0a-763d-4740-8d09-1231475891e0">
+<img width="889" alt="Screenshot 2024-02-05 at 16 23 13" src="https://github.com/Nurzhek/teztap4/assets/99636082/074adb6d-a11a-4674-b338-6ab1f6e1fab6">
